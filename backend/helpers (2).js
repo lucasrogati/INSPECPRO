@@ -8,6 +8,8 @@ const anomaliaRoutes = require('./anomaliaRoutes');
 const manutencaoRoutes = require('./manutencaoRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const relatorioRoutes = require('./relatorioRoutes');
+const notificacaoRoutes = require('./notificacaoRoutes');
+const configuracaoRoutes = require('./configuracaoRoutes');
 
 const router = express.Router();
 
@@ -20,5 +22,7 @@ router.use('/anomalias', anomaliaRoutes);
 router.use('/manutencoes', manutencaoRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/relatorios', relatorioRoutes);
+router.use('/notificacoes', notificacaoRoutes);
+router.use('/configuracoes', configuracaoRoutes);
 
 module.exports = router;

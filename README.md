@@ -7,7 +7,7 @@ identificação até a resolução:
 Inspeção → Anomalia → Prioridade → Responsável → Prazo → Manutenção → Verificação → Resolvido
 ```
 
-## Status: FASES 1 a 6 concluídas
+## Status: FASES 1 a 8 concluídas
 
 **Fase 1** — Estrutura do projeto, schema MySQL completo, autenticação JWT e layout base.
 
@@ -31,6 +31,17 @@ Inspeção → Anomalia → Prioridade → Responsável → Prazo → Manutenç�
 **Fase 6** — Dashboard e relatórios.
 - ✅ Dashboard com KPIs, evolução mensal, prioridade, status, prédios com mais pendências, itens que requerem atenção e próximas manutenções (filtro por prédio)
 - ✅ Relatórios de anomalias e manutenções com filtros, exportação CSV (Excel) e impressão/PDF
+
+**Fase 7** — Configurações e notificações.
+- ✅ Tela de Configurações com abas: **Perfil** (nome/e-mail), **Segurança** (troca de senha com confirmação da senha atual) e **Sistema** (volumes de dados e ambiente de execução, só administrador)
+- ✅ Sino de notificações no TopBar (contador + lista clicável, atualizada a cada 60 s): prazos vencidos, anomalias críticas, aguardando verificação, atribuídas a você e manutenções sob sua responsabilidade. Perfis de gestão veem tudo; `manutencao` vê só o que é seu
+- ✅ Busca global do TopBar: Enter leva a `/anomalias?busca=…`
+
+**Fase 8** — Segurança e testes automatizados.
+- ✅ Limite de tentativas de login (429 após 10 falhas por IP em 15 min; só falhas contam)
+- ✅ Cabeçalhos de segurança (helmet), CORS restrito às origens em `CORS_ORIGIN` e corpo JSON limitado a 1 MB
+- ✅ O servidor se recusa a subir sem `JWT_SECRET` (ou com o segredo de exemplo em produção); erros 500 não expõem detalhes em produção
+- ✅ 18 testes automatizados (autenticação, perfil/senha, permissões, fluxo completo de status da anomalia, validações, notificações, rate limit)
 
 ## Stack
 - **Frontend:** React 18 + Vite, Tailwind CSS v4, React Router, Axios, lucide-react
@@ -72,6 +83,18 @@ npm run dev    # inicia em http://localhost:5173
 Acesse `http://localhost:5173`, faça login com as credenciais do seed e você
 será redirecionado ao dashboard.
 
+### 4. Testes (backend)
+Os testes usam um banco separado (`inspecpro_test`), recriado a partir do `schema.sql` a cada arquivo, e **nunca tocam no banco real**.
+O usuário do MySQL do `.env` precisa de permissão para criar/remover esse banco.
+```bash
+cd backend
+npm test
+```
+Para usar outro nome de banco de testes: `DB_TEST_NAME=meu_banco_de_teste npm test`.
+
+> **CORS:** por padrão a API aceita apenas `http://localhost:5173`. Acessando o frontend por outro endereço
+> (ex.: `127.0.0.1` ou um domínio), inclua-o em `CORS_ORIGIN` no `.env` do backend.
+
 ---
 
 ## Estrutura de pastas
@@ -85,6 +108,7 @@ backend/
     controllers/   # lógica de negócio das rotas
     routes/       # definição dos endpoints REST
     utils/        # helpers (geração de token, async handler)
+  tests/          # testes automatizados (node:test) + helpers de banco/servidor
     app.js        # configuração do Express
     server.js     # ponto de entrada
 
@@ -155,6 +179,14 @@ frontend/
 | GET    | `/api/dashboard` | KPIs e séries (filtro opcional `predio_id`) | qualquer autenticado |
 | GET    | `/api/relatorios/anomalias` | Relatório de anomalias (`formato=csv` para exportar) | qualquer autenticado |
 | GET    | `/api/relatorios/manutencoes` | Relatório de manutenções (`formato=csv` para exportar) | qualquer autenticado |
+
+### Fase 7 — Conta, notificações e sistema
+| Método | Rota | Descrição | Perfis permitidos |
+|--------|------|-----------|--------------------|
+| PUT    | `/api/auth/perfil` | Atualiza nome e e-mail do próprio usuário | qualquer autenticado |
+| PUT    | `/api/auth/senha` | Troca a própria senha (`{ senha_atual, nova_senha }`) | qualquer autenticado |
+| GET    | `/api/notificacoes` | Alertas calculados do usuário (`{ total, itens[] }`) | qualquer autenticado |
+| GET    | `/api/configuracoes/sistema` | Contagens e informações de execução | administrador |
 
 ### Fluxo de status da anomalia
 ```

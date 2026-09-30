@@ -8,6 +8,11 @@ const STATUS_ANOMALIA = ['identificado', 'pendente', 'em_manutencao', 'aguardand
 // Fase 5 — manutenções
 const STATUS_MANUTENCAO = ['agendada', 'em_andamento', 'concluida'];
 
+const ROTULOS_PRIORIDADE = { baixa: 'baixa', media: 'média', alta: 'alta', critica: 'crítica' };
+function rotuloPrioridade(p) {
+  return ROTULOS_PRIORIDADE[p] || p;
+}
+
 function isEmailValido(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email || '');
 }
@@ -25,6 +30,7 @@ module.exports = {
   PRIORIDADES,
   STATUS_ANOMALIA,
   STATUS_MANUTENCAO,
+  rotuloPrioridade,
   isEmailValido,
   isDataValida,
 };

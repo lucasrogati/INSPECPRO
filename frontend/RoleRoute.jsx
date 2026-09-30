@@ -1,6 +1,21 @@
-import { Bell, Search } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Search } from 'lucide-react';
+import NotificacoesMenu from './NotificacoesMenu';
 
 export default function TopBar({ title, subtitle, children }) {
+  const navigate = useNavigate();
+  const [busca, setBusca] = useState('');
+
+  // A busca global procura anomalias (título, descrição, prédio, ambiente…).
+  function handleBuscar(e) {
+    if (e.key !== 'Enter') return;
+    const termo = busca.trim();
+    if (!termo) return;
+    navigate(`/anomalias?busca=${encodeURIComponent(termo)}`);
+    setBusca('');
+  }
+
   return (
     <div
       className="flex items-center justify-between flex-shrink-0 no-print"
@@ -26,37 +41,17 @@ export default function TopBar({ title, subtitle, children }) {
             size={14}
             style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
           />
-          <input type="text" placeholder="Buscar…" className="search-input" style={{ width: 180 }} />
-        </div>
-        <button
-          style={{
-            position: 'relative',
-            background: 'none',
-            border: '1px solid #e2e8f0',
-            borderRadius: 6,
-            width: 36,
-            height: 36,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            color: '#64748b',
-          }}
-        >
-          <Bell size={16} />
-          <span
-            style={{
-              position: 'absolute',
-              top: 6,
-              right: 6,
-              width: 7,
-              height: 7,
-              background: '#dc2626',
-              borderRadius: '50%',
-              border: '1.5px solid #fff',
-            }}
+          <input
+            type="text"
+            placeholder="Buscar anomalias…"
+            className="search-input"
+            style={{ width: 190 }}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            onKeyDown={handleBuscar}
           />
-        </button>
+        </div>
+        <NotificacoesMenu />
       </div>
     </div>
   );

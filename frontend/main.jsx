@@ -12,6 +12,17 @@ async function me() {
   return data.usuario;
 }
 
+async function atualizarPerfil(dados) {
+  const { data } = await api.put('/auth/perfil', dados);
+  localStorage.setItem('inspecpro_usuario', JSON.stringify(data.usuario));
+  return data.usuario;
+}
+
+async function alterarSenha(senhaAtual, novaSenha) {
+  const { data } = await api.put('/auth/senha', { senha_atual: senhaAtual, nova_senha: novaSenha });
+  return data;
+}
+
 function logout() {
   localStorage.removeItem('inspecpro_token');
   localStorage.removeItem('inspecpro_usuario');
@@ -26,4 +37,4 @@ function getToken() {
   return localStorage.getItem('inspecpro_token');
 }
 
-export default { login, me, logout, getUsuarioLocal, getToken };
+export default { login, me, atualizarPerfil, alterarSenha, logout, getUsuarioLocal, getToken };

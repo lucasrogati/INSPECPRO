@@ -10,7 +10,7 @@ import AnomaliasPage from './pages/AnomaliasPage';
 import AnomaliaDetailPage from './pages/AnomaliaDetailPage';
 import ManutencoesPage from './pages/ManutencoesPage';
 import RelatoriosPage from './pages/RelatoriosPage';
-import EmDesenvolvimento from './pages/EmDesenvolvimento';
+import ConfiguracoesPage from './pages/ConfiguracoesPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import RoleRoute from './components/RoleRoute';
 import AppLayout from './components/AppLayout';
@@ -44,7 +44,7 @@ export default function App() {
             </RoleRoute>
           }
         />
-        <Route path="/configuracoes" element={<EmDesenvolvimento titulo="Configurações" fase="uma próxima fase" />} />
+        <Route path="/configuracoes" element={<ConfiguracoesPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />

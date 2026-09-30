@@ -6,8 +6,10 @@ function notFound(req, res, next) {
 function errorHandler(err, req, res, next) {
   console.error(err);
   const statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 500;
+  // Em produção, não expõe detalhes internos (SQL, caminhos…) em erros 500.
+  const ocultar = statusCode === 500 && process.env.NODE_ENV === 'production';
   res.status(statusCode).json({
-    message: err.message || 'Erro interno do servidor.',
+    message: ocultar ? 'Erro interno do servidor.' : err.message || 'Erro interno do servidor.',
   });
 }
 
